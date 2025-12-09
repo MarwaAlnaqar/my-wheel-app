@@ -1,0 +1,250 @@
+/* :root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+} */
+/* .container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.wheel {
+  width: 350px;
+  height: 350px;
+  border-radius: 50%;
+  border: 5px solid #333;
+  position: relative;
+  transition: transform 3s ease-out;
+}
+
+.segment {
+  position: absolute;
+  width: 50%;
+  left: 50%;
+  top: 50%;
+  transform-origin: left center;
+  background: #f4b400;
+  color: #000;
+  font-weight: bold;
+  padding-left: 12px;
+}
+
+.spin-btn {
+  margin-top: 20px;
+  padding: 12px 30px;
+  font-size: 18px;
+  background: #1a73e8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.result {
+  margin-top: 20px;
+  font-size: 24px;
+  font-weight: bold;
+} */
+
+
+/* .wheel {
+  position: relative;
+  width: 260px;
+  height: 260px;
+  margin: 0 auto 16px;
+  cursor: pointer;
+  transition: transform 3s cubic-bezier(0.17, 0.67, 0.21, 1.29);
+} */
+.app {
+  position: relative;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column; /* to place banner on top, wheel below */
+  justify-content: flex-start;
+  align-items: center;
+  background: #000000;
+  font-family: Arial, sans-serif;
+  color: white;
+  padding-top: 20px;
+}
+
+.wheel-wrapper {
+  text-align: center;
+  position: relative; /* for wheel-name centering */
+  margin-top: 20px;
+}
+
+/* 🔥 Winners banner */
+.winner-banner {
+ position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 12px;
+  padding: 16px 24px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  margin-bottom: 10px;
+  text-align: left;
+  width: 500px;
+  height: 300px;
+
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  z-index: 10000;
+  
+}
+
+.winner-banner h2 {
+  margin: 0 0 8px;
+  font-size: 20px;
+}
+
+.winner-banner p {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.winner-banner ol {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.winner-banner li {
+  margin-bottom: 4px;
+}
+
+.winner-rank {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.winner-name {
+  font-weight: 600;
+  font-size: 42px;
+  color: #000000;
+}
+
+/* Wheel */
+
+.wheel {
+  position: relative;
+  width: 900px;
+  height: 900px;
+  cursor: pointer;
+  transition: transform 60s linear; /* smooth 1-minute spin */
+  margin: 0 auto;
+}
+
+.wheel img {
+  width: 100%;
+  height: 100%;
+}
+
+/* Name in center, not rotating */
+.wheel-name {
+  position: absolute;
+  top: 49%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 32px;
+  font-weight: bold;
+  pointer-events: none;
+  text-shadow: 0 0 10px black;
+}
+
+.spin-btn {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background-color: "white";
+   color: black;
+    margin-top: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+ 
+  cursor: pointer;
+}
+
+.spin-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.result {
+  margin-top: 16px;
+  font-size: 22px;
+}
+
+
