@@ -57,3 +57,81 @@
 body{
   margin: 0;
 }
+/* WheelPopup */
+.winner-popup {
+  position: relative;
+  text-align: center;
+  padding-top: 12px;
+  
+}
+
+.winner-popup-close {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  border: none;
+  background: transparent;
+  color: #9ca3af;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.winner-popup-close:hover {
+  color: #e5e7eb;
+}
+
+.winner-popup-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  color: #e5e7eb;
+  margin-bottom: 10px;
+}
+
+.winner-popup-title {
+  margin: 20px 0 ;
+  font-size: 62px;
+  font-family: 'lobster-regular', cursive;
+  letter-spacing: 1px;
+}
+
+.winner-popup-subtitle {
+  margin: 0 0 6px;
+  font-size: 44px;
+  /* color: #cbd5f5; */
+}
+
+.winner-popup-rank {
+  font-weight: 700;
+  color: #facc15;
+}
+
+.winner-popup-name {
+  margin: 20px auto 20px;
+  font-size: 60px;
+  font-weight: 800;
+  color: #fbbf24;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
+.winner-popup-button {
+  padding: 10px 26px;
+  border-radius: 999px;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #facc15;
+  color: #0f172a;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.winner-popup-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+}

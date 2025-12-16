@@ -1,146 +1,252 @@
 import wheelImg from "../assets/wheel.png";
-import wheelbg from "../assets/bg.jpg";
+import wheelstand from "../assets/stand3.png";
+import wheelstick from "../assets/stick.png";
+import arrow from "../assets/arrow.svg";
+
+
+
+
 import { useEffect, useRef, useState } from "react";
 import "../App.css";
-const NAMES = ["Marwa", "Omar", "Sara", "Lina", "Rami", "Nour"];
+import { getParticipants, saveWinner } from "../services/Users";
+import WheelPopup from "./WheelPopup";
 
 export default function PrizeWheel() {
+  const SPIN_SECONDS = 30;
+
   const [currentName, setCurrentName] = useState("?");
   const [finalName, setFinalName] = useState(null);
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [winners, setWinners] = useState([]); // store winners (keep last 3)
+  const [isStickAnimating, setIsStickAnimating] = useState(false);
+  const [participants, setParticipants] = useState([]);
+  const [winners, setWinners] = useState([]);
+  const [timeLeft, setTimeLeft] = useState(SPIN_SECONDS);
 
   const intervalRef = useRef(null);
-  const timeoutRef = useRef(null);
+  const spinTimeoutRef = useRef(null);
+  const stickTimeoutRef = useRef(null);
+  const countdownRef = useRef(null);
 
-  const startSpin = () => {
-    if (isSpinning) return;
+  /* ================= STYLES ================= */
 
-    setIsSpinning(true);
-    setFinalName(null);
+  const styles = {
+    app: {
+      height: "100vh",
+      overflow: "hidden",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor:'#c9a3b2'
+    },
 
-    // reset center text if you want
-    // setCurrentName("?");
+    titleMain: {
+      marginTop: 8,
+      padding: 20,
+      fontFamily: "Lobster-Regular",
+      fontSize: 54,
+      color: "#B5281D",
+    },
 
-    // FAST name animation (every 80ms)
-    intervalRef.current = window.setInterval(() => {
-      const idx = Math.floor(Math.random() * NAMES.length);
-      setCurrentName(NAMES[idx]);
-    }, 80);
+    titleSub: {
+      marginTop: 0,
+      padding: 20,
+      fontFamily: "Lobster-Regular",
+      fontSize: 48,
+      color: "#B5281D",
+    },
 
-    // Smooth rotation for 60 seconds in ONE direction
-    const fullTurns = 360 * 60; // 60 full circles
-    const randomOffset = Math.floor(Math.random() * 360);
+    centerRow: {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 40,
+      width: "100%",
+      flex: 1,
+    },
 
-    setRotation((prev) => prev + fullTurns + randomOffset);
+    nameBox: {
+      width: 420,
+      padding: "24px 16px",
+      backgroundColor: "#8b140252",
+      borderRadius: 15,
+      textAlign: "center",
+    },
 
-    // Stop after 1 minute
-    timeoutRef.current = window.setTimeout(() => {
-      if (intervalRef.current !== null) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+    nameText: {
+      fontFamily: "Lobster-Regular",
+      fontSize: 32,
+      zIndex: 1000,
+    },
 
-      const winnerIndex = Math.floor(Math.random() * NAMES.length);
-      const winner = NAMES[winnerIndex];
+    wheelWrapper: {
+      height: "55vh",
+      maxHeight: 500,
+      position: "relative",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+    },
 
-      setCurrentName(winner);
-      setFinalName(winner);
-      setIsSpinning(false);
+    wheel: {
+      zIndex: 100,
+    },
 
-      // Save winner (keep only latest 3)
-      setWinners((prev) => {
-        const updated = [...prev, winner];
-        return updated.slice(-3);
-      });
-    }, 60000); // 1 minute
+    stand: {
+      position: "absolute",
+      top: "88%",
+      left: "50%",
+      transform: "translate(-50%, -50%)",
+      width: 420,
+      height: 300,
+      zIndex: 0,
+    },
+
+    timer: {
+      marginTop: 6,
+      fontSize: 22,
+      fontWeight: "bold",
+      color: "#B5281D",
+    },
   };
 
-  // Cleanup
+  /* ================= LOGIC ================= */
+
+  const getRankLabel = (n) =>
+    n === 1 ? "First" : n === 2 ? "Second" : n === 3 ? "Third" : `${n}th`;
+
+  const clearCountdown = () => {
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
+    }
+  };
+
   useEffect(() => {
+    getParticipants().then(setParticipants);
+
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      clearInterval(intervalRef.current);
+      clearTimeout(spinTimeoutRef.current);
+      clearTimeout(stickTimeoutRef.current);
+      clearCountdown();
     };
   }, []);
 
-  // Compute last winner + rank
-  let lastWinner = null;
-  let rankLabel = "";
-  if (winners.length > 0) {
-    const lastIndex = winners.length - 1;
-    lastWinner = winners[lastIndex];
+  const startSpin = () => {
+    if (isSpinning || !participants.length) return;
 
-    rankLabel =
-      lastIndex === 0
-        ? "First"
-        : lastIndex === 1
-        ? "Second"
-        : lastIndex === 2
-        ? "Third"
-        : `${lastIndex + 1}th`;
-  }
+    setIsSpinning(true);
+    setFinalName(null);
+    setTimeLeft(SPIN_SECONDS);
+
+    countdownRef.current = setInterval(() => {
+      setTimeLeft((t) => (t <= 1 ? 0 : t - 1));
+    }, 1000);
+
+    intervalRef.current = setInterval(() => {
+      const idx = Math.floor(Math.random() * participants.length);
+      setCurrentName(participants[idx].name);
+    }, 80);
+
+    setRotation((r) => r + 360 * 30 + Math.random() * 360);
+
+    spinTimeoutRef.current = setTimeout(() => {
+      clearInterval(intervalRef.current);
+      clearCountdown();
+
+      const winner = participants[Math.floor(Math.random() * participants.length)];
+      const rankLabel = getRankLabel(winners.length + 1);
+
+      setCurrentName(winner.name);
+      setFinalName({ ...winner, rankLabel });
+      setIsSpinning(false);
+      setTimeLeft(0);
+
+      saveWinner({
+        id: winner.participantId,
+        name: winner.name,
+        email: winner.email,
+        rankLabel,
+      });
+
+      setWinners((prev) => [...prev, winner].slice(-3));
+    }, SPIN_SECONDS * 1000);
+  };
+
+  const handleStickClick = () => {
+    if (isSpinning || isStickAnimating) return;
+
+    setIsStickAnimating(true);
+    stickTimeoutRef.current = setTimeout(() => {
+      setIsStickAnimating(false);
+      startSpin();
+    }, 1000);
+  };
+
+  const handleCloseWinnerPopup = () => {
+    setFinalName(null);
+    setCurrentName("?");
+    setTimeLeft(SPIN_SECONDS);
+    setWinners([]);
+  };
+
+  /* ================= UI ================= */
 
   return (
-    <div className="app">
-      {/* Winners banner at the top */}
-      {lastWinner && (
-        <div
-          className="winner-banner"
-          style={{
-            backgroundImage: `url(${wheelbg})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          <h2 style={{ fontSize: "42px" }}>🎉 Congratulations! 🎉</h2>
+    <div style={styles.app}>
+      <h2 style={styles.titleMain}>Alloha!</h2>
+      <h2 style={styles.titleSub}>Let's use our lucky prize wheel!</h2>
 
-          <div className="last-winner-box">
-            <p>
-              Our <strong>{rankLabel}</strong> winner is:&nbsp;
-              <span className="winner-name">{lastWinner}</span>
-            </p>
-          </div>
-
-          <button
-            onClick={() => {
-              // hide banner + start again
-              setWinners([]);
-              setFinalName(null);
-              setCurrentName("?");
-              startSpin();
-            }}
-            className="spin-btn"
-        
-            disabled={isSpinning}
-          >
-            Play Again
-          </button>
-        </div>
+      {finalName && (
+        <WheelPopup
+          open
+          onClose={handleCloseWinnerPopup}
+          title="Congratulations!"
+          winnerName={finalName.name}
+          rankLabel={finalName.rankLabel}
+          buttonText="Play Again"
+          isWinnerPopup
+        />
       )}
 
-      <div className="wheel-wrapper">
-        <div
-          className="wheel"
-          style={{ transform: `rotate(${rotation}deg)` }}
-          onClick={startSpin}
-        >
-          <img src={wheelImg} alt="Wheel" />
+      <div style={styles.centerRow}>
+        <div style={styles.nameBox}>
+          <div style={styles.nameText}>{currentName}</div>
         </div>
 
-        {/* Name in the center (no rotate) */}
-        <div className="wheel-name">{currentName}</div>
+        <div style={styles.wheelWrapper}>
+          <div
+            className="wheel"
+            style={{ ...styles.wheel, transform: `rotate(${rotation}deg)` }}
+          >
+            <img src={wheelImg} alt="Wheel" />
+          </div>
+       <img
+            src={arrow}
+            alt="Stick"
+          style={{top: '10%',
+    left: '100%',
+ 
+    rotate: '-18deg'
+}}
+            className={`wheel-stick `}
+          />
+          <img
+            src={wheelstick}
+            alt="Stick"
+            onClick={handleStickClick}
+            className={`wheel-stick ${isStickAnimating ? "stick-animating" : ""}`}
+          />
 
-        <button onClick={startSpin} className="spin-btn" disabled={isSpinning}>
-          {isSpinning ? "Spinning..." : "Spin"}
-        </button>
+          <img src={wheelstand} alt="Stand" style={styles.stand} />
 
-        {finalName && (
-          <p className="result">
-            Selected: <strong>{finalName}</strong>
-          </p>
-        )}
+          <div style={styles.timer}>
+            {isSpinning ? `${timeLeft}s` : ""}
+          </div>
+        </div>
       </div>
     </div>
   );

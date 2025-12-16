@@ -121,17 +121,21 @@ button:focus-visible {
   transition: transform 3s cubic-bezier(0.17, 0.67, 0.21, 1.29);
 } */
 .app {
+  min-width: 920px;
+  height: 100vh;
   position: relative;
   margin: 0;
-  min-height: 100vh;
+  padding: ;
+  min-height: 920px;
   display: flex;
   flex-direction: column; /* to place banner on top, wheel below */
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
-  background: #000000;
+  align-content: center;
+  background: #C9A3B2;
   font-family: Arial, sans-serif;
   color: white;
-  padding-top: 20px;
+  /* padding-top: 20px; */
 }
 
 .wheel-wrapper {
@@ -200,8 +204,8 @@ button:focus-visible {
 
 .wheel {
   position: relative;
-  width: 900px;
-  height: 900px;
+  width: 500px;
+  height: 500px;
   cursor: pointer;
   transition: transform 60s linear; /* smooth 1-minute spin */
   margin: 0 auto;
@@ -214,6 +218,16 @@ button:focus-visible {
 
 /* Name in center, not rotating */
 .wheel-name {
+  /* position: absolute;
+  top: 49%;
+  left: 50%; */
+  /* transform: translate(-50%, -50%); */
+  font-size: 32px;
+  font-weight: bold;
+  pointer-events: none;
+  text-shadow: 0 0 10px black;
+}
+.wheel-timer {
   position: absolute;
   top: 49%;
   left: 50%;
@@ -223,7 +237,6 @@ button:focus-visible {
   pointer-events: none;
   text-shadow: 0 0 10px black;
 }
-
 .spin-btn {
   margin-top: 20px;
   padding: 12px 30px;
@@ -248,3 +261,50 @@ button:focus-visible {
 }
 
 
+.wheel {
+  position: relative;
+  width: 700px;
+  height: 700px;
+  cursor: default; /* click only on stick now */
+  transition: transform 30s linear; /* 30 seconds spin */
+  margin: 0 auto;
+}
+
+/* base stick */
+.wheel-stick {
+  position: absolute;
+  top: 50%;
+  left: 90%;
+  transform: translate(-50%, -50%);
+  width: 380px;
+  height: 100px;
+  z-index: 400;
+  cursor: pointer;
+}
+
+/* only when isStickAnimating = true */
+
+
+/* @keyframes stick-bounce {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(-2px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(2px);
+  }
+} */
+.stick-animating {
+  animation: stick-shake 1.5s ease-in-out infinite;
+}
+
+@keyframes stick-shake {
+  0% { transform: translate(-50%, -50%) rotate(0deg); }
+  /* 25% { transform: translate(-50%, -50%) rotate(20deg); }
+  /* 50% { transform: translate(-50%, -50%) rotate(0deg); } */
+  50% { transform: translate(-50%, -50%) rotate(-10deg); }
+  75% { transform: translate(-50%, -50%) rotate(-7deg); }
+  95% { transform: translate(-50%, -50%) rotate(-5deg); }
+
+  100% { transform: translate(-50%, -50%) rotate(0deg); }
+}
