@@ -1,11 +1,13 @@
 {
   "name": "my-wheel-app",
   "private": true,
+  "homepage": "https://marwaalnaqar.github.io/my-wheel-app/",
   "version": "0.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+     "deploy": "gh-pages -d build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
